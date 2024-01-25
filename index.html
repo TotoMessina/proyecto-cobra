@@ -1,4 +1,3 @@
-
 <!-- 
 <!DOCTYPE html>
 <html lang="es">
@@ -21,12 +20,13 @@
 
         #controls {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin-top: 10px;
         }
 
         button {
-            margin: 0 10px;
+            margin: 5px;
             padding: 10px;
             font-size: 16px;
             cursor: pointer;
@@ -65,9 +65,11 @@
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
     <div id="controls">
         <button id="btnUp">Arriba</button>
+        <div>
+            <button id="btnLeft">Izquierda</button>
+            <button id="btnRight">Derecha</button>
+        </div>
         <button id="btnDown">Abajo</button>
-        <button id="btnLeft">Izquierda</button>
-        <button id="btnRight">Derecha</button>
     </div>
     <div id="score">Puntuación: 0</div>
     <div id="game-over-message"></div>
@@ -253,6 +255,7 @@
 </body>
 </html> -->
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -341,7 +344,7 @@
             const scoreElement = document.getElementById('score');
 
             const gridSize = 20;
-            const initialSpeed = 100; // Velocidad inicial
+            const initialSpeed = 200; // Velocidad inicial reducida
             let snake = [{ x: 4, y: 4 }];
             let food = { x: 10, y: 10 };
             let direction = 'right';
@@ -387,7 +390,7 @@
                 if (head.x === food.x && head.y === food.y) {
                     generateFood();
                     // Aumentar la velocidad cuando se come la comida
-                    speed = Math.max(speed - 10, 50); // Mínimo de velocidad: 50
+                    speed = Math.max(speed - 5, 50); // Mínimo de velocidad: 50
                     clearInterval(gameInterval);
                     gameInterval = setInterval(updateGame, speed);
 
