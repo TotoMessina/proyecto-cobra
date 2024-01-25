@@ -299,7 +299,6 @@
     </script>
 </body>
 </html> -->
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -366,6 +365,7 @@
     <div id="pre-menu">
         <h2>BIENVENIDO AL FANTOCHEGAME</h2>
         <button id="btnJugar">JUGAR</button>
+        <button id="btnReiniciar" style="display: none;">REINICIAR</button>
     </div>
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
     <div id="controls">
@@ -382,6 +382,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const preMenu = document.getElementById('pre-menu');
             const btnJugar = document.getElementById('btnJugar');
+            const btnReiniciar = document.getElementById('btnReiniciar');
             const canvas = document.getElementById('snakeCanvas');
             const context = canvas.getContext('2d');
             const btnUp = document.getElementById('btnUp');
@@ -502,11 +503,17 @@
                 gameOverMessage.innerHTML = `Perdiste. ¡Vuelve a intentar! Tu puntuación: ${score}`;
                 gameOverMessage.style.display = 'block';
 
-                // Ocultar los botones de movimiento
-                hideMovementButtons();
+                // Mostrar los botones de movimiento
+                showMovementButtons();
 
-                // Ocultar el texto de puntuación
-                hideScoreText();
+                // Mostrar el texto de puntuación
+                showScoreText();
+
+                // Ocultar el botón "JUGAR"
+                btnJugar.style.display = 'none';
+
+                // Mostrar el botón "REINICIAR"
+                btnReiniciar.style.display = 'block';
 
                 resetGame();
             }
@@ -517,11 +524,17 @@
                 gameOverMessage.innerHTML = '¡Felicidades, ganaste!';
                 gameOverMessage.style.display = 'block';
 
-                // Ocultar los botones de movimiento
-                hideMovementButtons();
+                // Mostrar los botones de movimiento
+                showMovementButtons();
 
-                // Ocultar el texto de puntuación
-                hideScoreText();
+                // Mostrar el texto de puntuación
+                showScoreText();
+
+                // Ocultar el botón "JUGAR"
+                btnJugar.style.display = 'none';
+
+                // Mostrar el botón "REINICIAR"
+                btnReiniciar.style.display = 'block';
 
                 resetGame();
             }
@@ -536,15 +549,11 @@
                 snake = [{ x: 4, y: 4 }]; // Restablecer la serpiente a un solo segmento
                 generateFood();
 
-                // Mostrar nuevamente los botones de movimiento solo si el juego no ha terminado
-                if (!gameOverMessage.style.display || gameOverMessage.style.display === 'none') {
-                    showMovementButtons();
-                }
+                // Ocultar los botones de movimiento
+                hideMovementButtons();
 
-                // Mostrar nuevamente el texto de puntuación solo si el juego no ha terminado
-                if (!gameOverMessage.style.display || gameOverMessage.style.display === 'none') {
-                    showScoreText();
-                }
+                // Ocultar el texto de puntuación
+                hideScoreText();
             }
 
             function updateScore() {
@@ -586,6 +595,11 @@
             function showScoreText() {
                 scoreElement.style.display = 'block';
             }
+
+            // Agregar evento al botón "REINICIAR"
+            btnReiniciar.addEventListener('click', () => {
+                location.reload(); // Recargar la página al hacer clic en "REINICIAR"
+            });
 
             btnJugar.addEventListener('click', startGame);
 
