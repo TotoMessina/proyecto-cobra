@@ -358,7 +358,7 @@
             border: 1px solid white;
             background-color: #f0f0f0;
             border-radius: 3%;
-            width: 400px;
+            width: 350px;
             height: 250px;
         }
 
@@ -366,7 +366,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-top: 200px;
+            margin-top: 300px;
         }
 
         img#btnUp,
@@ -432,7 +432,7 @@
         <button id="btnReiniciar" style="display: none;">VOLVER A JUGAR</button>
     </div>
     <div id="container">
-        <canvas id="snakeCanvas" width="400" height="250"></canvas>
+        <canvas id="snakeCanvas" width="350" height="250"></canvas>
         <div id="controls">
             <img id="btnUp" src="assets/arriba.png" alt="Arriba">
             <div id="horizontal-buttons">
@@ -466,6 +466,7 @@
             let direction = 'right';
             let speed = initialSpeed;
             let score = 0;
+            let scoreVisible = false; // Variable para rastrear la visibilidad de la puntuación
 
             let gameInterval;
 
@@ -582,7 +583,8 @@
 
                 // Mostrar el botón "REINICIAR"
                 btnReiniciar.style.display = 'block';
-
+                scoreVisible = false; // Ocultar la puntuación al finalizar el juego
+                updateScoreVisibility();
                 resetGame();
             }
 
@@ -612,6 +614,8 @@
                 direction = 'right';
                 speed = initialSpeed;
                 score = 0;
+                scoreVisible = false; // Ocultar la puntuación al reiniciar el juego
+                updateScoreVisibility();
                 updateScore();
 
                 clearInterval(gameInterval);
@@ -624,6 +628,11 @@
                 // Ocultar el texto de puntuación
                 hideScoreText();
             }
+            
+            function updateScoreVisibility() {
+            // Actualizar la visibilidad del elemento de puntuación
+            scoreElement.style.display = scoreVisible ? 'block' : 'none';
+            }
 
             function updateScore() {
                 scoreElement.textContent = `PUNTUACION: ${score}`;
@@ -634,6 +643,8 @@
                 canvas.style.display = 'block';
                 gameOverMessage.style.display = 'none';
                 gameInterval = setInterval(updateGame, speed);
+                scoreVisible = true; // Mostrar la puntuación al iniciar el juego
+                updateScoreVisibility();
             }
 
             function updateGame() {
