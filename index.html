@@ -1,7 +1,6 @@
 
-
 <!-- 
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -139,6 +138,11 @@
                     // Incrementar el puntaje
                     score += 1;
                     updateScore();
+
+                    // Verificar si el jugador ha ganado
+                    if (score === 10) {
+                        winGame();
+                    }
                 } else {
                     snake.pop(); // Eliminar la cola si no hay comida
                 }
@@ -179,6 +183,14 @@
                 preMenu.style.display = 'flex';
                 canvas.style.display = 'none';
                 gameOverMessage.innerHTML = `Perdiste. ¡Vuelve a intentar! Tu puntuación: ${score}`;
+                gameOverMessage.style.display = 'block';
+                resetGame();
+            }
+
+            function winGame() {
+                preMenu.style.display = 'flex';
+                canvas.style.display = 'none';
+                gameOverMessage.innerHTML = '¡Felicidades, ganaste!';
                 gameOverMessage.style.display = 'block';
                 resetGame();
             }
@@ -262,12 +274,13 @@
 
         #controls {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            align-items: center;
             margin-top: 10px;
         }
 
         button {
-            margin: 0 10px;
+            margin: 5px;
             padding: 10px;
             font-size: 16px;
             cursor: pointer;
@@ -306,9 +319,11 @@
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
     <div id="controls">
         <button id="btnUp">Arriba</button>
+        <div>
+            <button id="btnLeft">Izquierda</button>
+            <button id="btnRight">Derecha</button>
+        </div>
         <button id="btnDown">Abajo</button>
-        <button id="btnLeft">Izquierda</button>
-        <button id="btnRight">Derecha</button>
     </div>
     <div id="score">Puntuación: 0</div>
     <div id="game-over-message"></div>
