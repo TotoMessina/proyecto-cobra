@@ -18,6 +18,8 @@ h2{
     background-color: pink;
     border: 1px outset pink;
     color: hotpink;
+    font-weight: 700;
+    font-family: "Roboto Flex", sans-serif;
     border-radius: 150px;
 }
 
@@ -28,6 +30,8 @@ h2{
     background-color: pink;
     border: 1px outset pink;
     color: hotpink;
+    font-weight: 700;
+    font-family: "Roboto Flex", sans-serif;
     border-radius: 150px;
 }
 
