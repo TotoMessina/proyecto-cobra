@@ -58,3 +58,23 @@ h2{
     font-family: "Roboto Flex", sans-serif;
     font-weight: 700;
 }
+
+#btnUp{
+    width: 20%;
+    height: auto;
+}
+
+#btnLeft{
+    width: 20%;
+    height: auto;
+}
+
+#btnRight{
+    width: 20%;
+    height: auto;
+}
+
+#btnDown{
+    width: 20%;
+    height: auto;
+}
