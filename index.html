@@ -365,7 +365,7 @@
     <div id="pre-menu">
         <h2>BIENVENIDO AL FANTOCHEGAME</h2>
         <button id="btnJugar">JUGAR</button>
-        <button id="btnReiniciar" style="display: none;">REINICIAR</button>
+        <button id="btnReiniciar" style="display: none;">VOLVER A JUGAR</button>
     </div>
     <canvas id="snakeCanvas" width="400" height="400"></canvas>
     <div id="controls">
@@ -500,7 +500,9 @@
             function endGame() {
                 preMenu.style.display = 'flex';
                 canvas.style.display = 'none';
-                gameOverMessage.innerHTML = `Perdiste. ¡Vuelve a intentar! Tu puntuación: ${score}`;
+                gameOverMessage.innerHTML = `PERDISTE`;
+                gameOverMessage.innerHTML = `¡VOLVE A JUGAR POR UN ALFAJOR FANTOCHE! Tu puntuación: ${score}`;
+                gameOverMessage.classList.add('lose');
                 gameOverMessage.style.display = 'block';
 
                 // Mostrar los botones de movimiento
@@ -521,7 +523,8 @@
             function winGame() {
                 preMenu.style.display = 'flex';
                 canvas.style.display = 'none';
-                gameOverMessage.innerHTML = '¡Felicidades, ganaste!';
+                gameOverMessage.innerHTML = '¡FELICIDADES GANASTE UN ALFAJOR FANTOCHE!';
+                gameOverMessage.classList.add('win')
                 gameOverMessage.style.display = 'block';
 
                 // Mostrar los botones de movimiento
