@@ -1,0 +1,495 @@
+
+
+<!-- 
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        button {
+            margin: 0 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #pre-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #pre-menu button {
+            margin-top: 10px;
+        }
+
+        #game-over-message {
+            display: none;
+            color: red;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        #score {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+    <title>Juego de la Serpiente</title>
+</head>
+<body>
+    <div id="pre-menu">
+        <h2>Bienvenido al Juego de la Serpiente</h2>
+        <button id="btnJugar">Jugar</button>
+    </div>
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+    <div id="controls">
+        <button id="btnUp">Arriba</button>
+        <button id="btnDown">Abajo</button>
+        <button id="btnLeft">Izquierda</button>
+        <button id="btnRight">Derecha</button>
+    </div>
+    <div id="score">Puntuación: 0</div>
+    <div id="game-over-message"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preMenu = document.getElementById('pre-menu');
+            const btnJugar = document.getElementById('btnJugar');
+            const canvas = document.getElementById('snakeCanvas');
+            const context = canvas.getContext('2d');
+            const btnUp = document.getElementById('btnUp');
+            const btnDown = document.getElementById('btnDown');
+            const btnLeft = document.getElementById('btnLeft');
+            const btnRight = document.getElementById('btnRight');
+            const gameOverMessage = document.getElementById('game-over-message');
+            const scoreElement = document.getElementById('score');
+
+            const gridSize = 20;
+            const initialSpeed = 100; // Velocidad inicial
+            let snake = [{ x: 4, y: 4 }];
+            let food = { x: 10, y: 10 };
+            let direction = 'right';
+            let speed = initialSpeed;
+            let score = 0;
+
+            let gameInterval;
+
+            function drawSnake() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                snake.forEach(segment => {
+                    context.fillStyle = '#4CAF50';
+                    context.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+                });
+            }
+
+            function drawFood() {
+                context.fillStyle = '#FF0000';
+                context.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            }
+
+            function moveSnake() {
+                const head = Object.assign({}, snake[0]);
+
+                switch (direction) {
+                    case 'up':
+                        head.y -= 1;
+                        break;
+                    case 'down':
+                        head.y += 1;
+                        break;
+                    case 'left':
+                        head.x -= 1;
+                        break;
+                    case 'right':
+                        head.x += 1;
+                        break;
+                }
+
+                snake.unshift(head);
+
+                // Verificar si la cabeza de la serpiente alcanza la comida
+                if (head.x === food.x && head.y === food.y) {
+                    generateFood();
+                    // Aumentar la velocidad cuando se come la comida
+                    speed = Math.max(speed - 10, 50); // Mínimo de velocidad: 50
+                    clearInterval(gameInterval);
+                    gameInterval = setInterval(updateGame, speed);
+
+                    // Incrementar el puntaje
+                    score += 1;
+                    updateScore();
+                } else {
+                    snake.pop(); // Eliminar la cola si no hay comida
+                }
+            }
+
+            function generateFood() {
+                food = {
+                    x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                    y: Math.floor(Math.random() * (canvas.height / gridSize))
+                };
+
+                // Verificar si la comida aparece en el cuerpo de la serpiente y generar otra si es así
+                while (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+                    food = {
+                        x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                        y: Math.floor(Math.random() * (canvas.height / gridSize))
+                    };
+                }
+            }
+
+            function checkCollision() {
+                const head = snake[0];
+
+                // Verificar colisión con las paredes
+                if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
+                    endGame();
+                }
+
+                // Verificar colisión con el propio cuerpo
+                for (let i = 1; i < snake.length; i++) {
+                    if (head.x === snake[i].x && head.y === snake[i].y) {
+                        endGame();
+                    }
+                }
+            }
+
+            function endGame() {
+                preMenu.style.display = 'flex';
+                canvas.style.display = 'none';
+                gameOverMessage.innerHTML = `Perdiste. ¡Vuelve a intentar! Tu puntuación: ${score}`;
+                gameOverMessage.style.display = 'block';
+                resetGame();
+            }
+
+            function resetGame() {
+                direction = 'right';
+                speed = initialSpeed;
+                score = 0;
+                updateScore();
+                clearInterval(gameInterval);
+                snake = [{ x: 4, y: 4 }]; // Restablecer la serpiente a un solo segmento
+                generateFood();
+            }
+
+            function updateScore() {
+                scoreElement.textContent = `Puntuación: ${score}`;
+            }
+
+            function startGame() {
+                preMenu.style.display = 'none';
+                canvas.style.display = 'block';
+                gameOverMessage.style.display = 'none';
+                gameInterval = setInterval(updateGame, speed);
+            }
+
+            function updateGame() {
+                moveSnake();
+                checkCollision();
+                drawSnake();
+                drawFood();
+            }
+
+            btnJugar.addEventListener('click', startGame);
+
+            btnUp.addEventListener('click', () => {
+                if (direction !== 'down') {
+                    direction = 'up';
+                }
+            });
+
+            btnDown.addEventListener('click', () => {
+                if (direction !== 'up') {
+                    direction = 'down';
+                }
+            });
+
+            btnLeft.addEventListener('click', () => {
+                if (direction !== 'right') {
+                    direction = 'left';
+                }
+            });
+
+            btnRight.addEventListener('click', () => {
+                if (direction !== 'left') {
+                    direction = 'right';
+                }
+            });
+        });
+    </script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        button {
+            margin: 0 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #pre-menu {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        #pre-menu button {
+            margin-top: 10px;
+        }
+
+        #game-over-message {
+            display: none;
+            color: red;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        #score {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+    <title>Juego de la Serpiente</title>
+</head>
+<body>
+    <div id="pre-menu">
+        <h2>Bienvenido al Juego de la Serpiente</h2>
+        <button id="btnJugar">Jugar</button>
+    </div>
+    <canvas id="snakeCanvas" width="400" height="400"></canvas>
+    <div id="controls">
+        <button id="btnUp">Arriba</button>
+        <button id="btnDown">Abajo</button>
+        <button id="btnLeft">Izquierda</button>
+        <button id="btnRight">Derecha</button>
+    </div>
+    <div id="score">Puntuación: 0</div>
+    <div id="game-over-message"></div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const preMenu = document.getElementById('pre-menu');
+            const btnJugar = document.getElementById('btnJugar');
+            const canvas = document.getElementById('snakeCanvas');
+            const context = canvas.getContext('2d');
+            const btnUp = document.getElementById('btnUp');
+            const btnDown = document.getElementById('btnDown');
+            const btnLeft = document.getElementById('btnLeft');
+            const btnRight = document.getElementById('btnRight');
+            const gameOverMessage = document.getElementById('game-over-message');
+            const scoreElement = document.getElementById('score');
+
+            const gridSize = 20;
+            const initialSpeed = 100; // Velocidad inicial
+            let snake = [{ x: 4, y: 4 }];
+            let food = { x: 10, y: 10 };
+            let direction = 'right';
+            let speed = initialSpeed;
+            let score = 0;
+
+            let gameInterval;
+
+            function drawSnake() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                snake.forEach(segment => {
+                    context.fillStyle = '#4CAF50';
+                    context.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize, gridSize);
+                });
+            }
+
+            function drawFood() {
+                context.fillStyle = '#FF0000';
+                context.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+            }
+
+            function moveSnake() {
+                const head = Object.assign({}, snake[0]);
+
+                switch (direction) {
+                    case 'up':
+                        head.y -= 1;
+                        break;
+                    case 'down':
+                        head.y += 1;
+                        break;
+                    case 'left':
+                        head.x -= 1;
+                        break;
+                    case 'right':
+                        head.x += 1;
+                        break;
+                }
+
+                snake.unshift(head);
+
+                // Verificar si la cabeza de la serpiente alcanza la comida
+                if (head.x === food.x && head.y === food.y) {
+                    generateFood();
+                    // Aumentar la velocidad cuando se come la comida
+                    speed = Math.max(speed - 10, 50); // Mínimo de velocidad: 50
+                    clearInterval(gameInterval);
+                    gameInterval = setInterval(updateGame, speed);
+
+                    // Incrementar el puntaje
+                    score += 1;
+                    updateScore();
+
+                    // Verificar si el jugador ha ganado
+                    if (score === 10) {
+                        winGame();
+                    }
+                } else {
+                    snake.pop(); // Eliminar la cola si no hay comida
+                }
+            }
+
+            function generateFood() {
+                food = {
+                    x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                    y: Math.floor(Math.random() * (canvas.height / gridSize))
+                };
+
+                // Verificar si la comida aparece en el cuerpo de la serpiente y generar otra si es así
+                while (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
+                    food = {
+                        x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                        y: Math.floor(Math.random() * (canvas.height / gridSize))
+                    };
+                }
+            }
+
+            function checkCollision() {
+                const head = snake[0];
+
+                // Verificar colisión con las paredes
+                if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
+                    endGame();
+                }
+
+                // Verificar colisión con el propio cuerpo
+                for (let i = 1; i < snake.length; i++) {
+                    if (head.x === snake[i].x && head.y === snake[i].y) {
+                        endGame();
+                    }
+                }
+            }
+
+            function endGame() {
+                preMenu.style.display = 'flex';
+                canvas.style.display = 'none';
+                gameOverMessage.innerHTML = `Perdiste. ¡Vuelve a intentar! Tu puntuación: ${score}`;
+                gameOverMessage.style.display = 'block';
+                resetGame();
+            }
+
+            function winGame() {
+                preMenu.style.display = 'flex';
+                canvas.style.display = 'none';
+                gameOverMessage.innerHTML = '¡Felicidades, ganaste!';
+                gameOverMessage.style.display = 'block';
+                resetGame();
+            }
+
+            function resetGame() {
+                direction = 'right';
+                speed = initialSpeed;
+                score = 0;
+                updateScore();
+                clearInterval(gameInterval);
+                snake = [{ x: 4, y: 4 }]; // Restablecer la serpiente a un solo segmento
+                generateFood();
+            }
+
+            function updateScore() {
+                scoreElement.textContent = `Puntuación: ${score}`;
+            }
+
+            function startGame() {
+                preMenu.style.display = 'none';
+                canvas.style.display = 'block';
+                gameOverMessage.style.display = 'none';
+                gameInterval = setInterval(updateGame, speed);
+            }
+
+            function updateGame() {
+                moveSnake();
+                checkCollision();
+                drawSnake();
+                drawFood();
+            }
+
+            btnJugar.addEventListener('click', startGame);
+
+            btnUp.addEventListener('click', () => {
+                if (direction !== 'down') {
+                    direction = 'up';
+                }
+            });
+
+            btnDown.addEventListener('click', () => {
+                if (direction !== 'up') {
+                    direction = 'down';
+                }
+            });
+
+            btnLeft.addEventListener('click', () => {
+                if (direction !== 'right') {
+                    direction = 'left';
+                }
+            });
+
+            btnRight.addEventListener('click', () => {
+                if (direction !== 'left') {
+                    direction = 'right';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
