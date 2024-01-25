@@ -87,14 +87,19 @@
             const scoreElement = document.getElementById('score');
 
             const gridSize = 20;
-            const initialSpeed = 100; // Velocidad inicial
+            const initialSpeed = 200; // Velocidad inicial reducida
             let snake = [{ x: 4, y: 4 }];
             let food = { x: 10, y: 10 };
+            let lastFoodPosition = null; // Almacenar la última posición de la comida
             let direction = 'right';
             let speed = initialSpeed;
             let score = 0;
 
             let gameInterval;
+
+            // Imagen de ejemplo para la comida
+            const foodImage = new Image();
+            foodImage.src = '../assets/LogoFantocheRosa.png'; // Reemplaza 'ruta/a/tu/imagen/comida.png' con la ruta de tu imagen
 
             function drawSnake() {
                 context.clearRect(0, 0, canvas.width, canvas.height);
@@ -105,8 +110,7 @@
             }
 
             function drawFood() {
-                context.fillStyle = '#FF0000';
-                context.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+                context.drawImage(foodImage, food.x * gridSize, food.y * gridSize, gridSize * 2, gridSize * 2);
             }
 
             function moveSnake() {
@@ -133,7 +137,7 @@
                 if (head.x === food.x && head.y === food.y) {
                     generateFood();
                     // Aumentar la velocidad cuando se come la comida
-                    speed = Math.max(speed - 10, 50); // Mínimo de velocidad: 50
+                    speed = Math.max(speed - 5, 50); // Mínimo de velocidad: 50
                     clearInterval(gameInterval);
                     gameInterval = setInterval(updateGame, speed);
 
@@ -151,18 +155,29 @@
             }
 
             function generateFood() {
-                food = {
-                    x: Math.floor(Math.random() * (canvas.width / gridSize)),
-                    y: Math.floor(Math.random() * (canvas.height / gridSize))
-                };
+                let newFood;
+                // Generar coordenadas asegurando que haya al menos un píxel de distancia de los bordes
+                do {
+                    newFood = {
+                        x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                        y: Math.floor(Math.random() * (canvas.height / gridSize))
+                    };
+                } while (
+                    (lastFoodPosition && newFood.x === lastFoodPosition.x && newFood.y === lastFoodPosition.y) ||
+                    newFood.x <= 0 || newFood.x >= (canvas.width / gridSize) - 1 || newFood.y <= 0 || newFood.y >= (canvas.height / gridSize) - 1
+                );
+
+                lastFoodPosition = { ...newFood };
 
                 // Verificar si la comida aparece en el cuerpo de la serpiente y generar otra si es así
-                while (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
-                    food = {
+                while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y)) {
+                    newFood = {
                         x: Math.floor(Math.random() * (canvas.width / gridSize)),
                         y: Math.floor(Math.random() * (canvas.height / gridSize))
                     };
                 }
+
+                food = { ...newFood };
             }
 
             function checkCollision() {
@@ -204,6 +219,7 @@
                 updateScore();
                 clearInterval(gameInterval);
                 snake = [{ x: 4, y: 4 }]; // Restablecer la serpiente a un solo segmento
+                lastFoodPosition = null;
                 generateFood();
             }
 
@@ -254,8 +270,6 @@
     </script>
 </body>
 </html> -->
-
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -353,6 +367,10 @@
 
             let gameInterval;
 
+            // Imagen de ejemplo para la comida
+            const foodImage = new Image();
+            foodImage.src = '../assets/LogoFantocheRosa.png'; // Reemplaza 'ruta/a/tu/imagen/comida.png' con la ruta de tu imagen
+
             function drawSnake() {
                 context.clearRect(0, 0, canvas.width, canvas.height);
                 snake.forEach(segment => {
@@ -362,8 +380,7 @@
             }
 
             function drawFood() {
-                context.fillStyle = '#FF0000';
-                context.fillRect(food.x * gridSize, food.y * gridSize, gridSize, gridSize);
+                context.drawImage(foodImage, food.x * gridSize, food.y * gridSize, gridSize * 2, gridSize * 2);
             }
 
             function moveSnake() {
@@ -387,7 +404,10 @@
                 snake.unshift(head);
 
                 // Verificar si la cabeza de la serpiente alcanza la comida
-                if (head.x === food.x && head.y === food.y) {
+                if (
+                    head.x <= food.x + 1 && head.x + 1 >= food.x &&
+                    head.y <= food.y + 1 && head.y + 1 >= food.y
+                ) {
                     generateFood();
                     // Aumentar la velocidad cuando se come la comida
                     speed = Math.max(speed - 5, 50); // Mínimo de velocidad: 50
@@ -408,25 +428,34 @@
             }
 
             function generateFood() {
-                food = {
-                    x: Math.floor(Math.random() * (canvas.width / gridSize)),
-                    y: Math.floor(Math.random() * (canvas.height / gridSize))
-                };
+                let newFood;
+                // Generar coordenadas asegurando que haya al menos un píxel de distancia de los bordes
+                do {
+                    newFood = {
+                        x: Math.floor(Math.random() * (canvas.width / gridSize)),
+                        y: Math.floor(Math.random() * (canvas.height / gridSize))
+                    };
+                } while (
+                    newFood.x <= 1 || newFood.x >= (canvas.width / gridSize) - 2 || 
+                    newFood.y <= 1 || newFood.y >= (canvas.height / gridSize) - 2
+                );
 
                 // Verificar si la comida aparece en el cuerpo de la serpiente y generar otra si es así
-                while (snake.some(segment => segment.x === food.x && segment.y === food.y)) {
-                    food = {
+                while (snake.some(segment => segment.x === newFood.x && segment.y === newFood.y)) {
+                    newFood = {
                         x: Math.floor(Math.random() * (canvas.width / gridSize)),
                         y: Math.floor(Math.random() * (canvas.height / gridSize))
                     };
                 }
+
+                food = { ...newFood };
             }
 
             function checkCollision() {
                 const head = snake[0];
 
                 // Verificar colisión con las paredes
-                if (head.x < 0 || head.x >= canvas.width / gridSize || head.y < 0 || head.y >= canvas.height / gridSize) {
+                if (head.x <= 0 || head.x >= (canvas.width / gridSize) - 1 || head.y <= 0 || head.y >= (canvas.height / gridSize) - 1) {
                     endGame();
                 }
 
