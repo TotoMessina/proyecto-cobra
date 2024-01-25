@@ -1,8 +1,15 @@
-body{
+#container{
     background-image: url(fondo.png);
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 20px;
 }
 
 h2{
@@ -21,6 +28,7 @@ h2{
     font-weight: 700;
     font-family: "Roboto Flex", sans-serif;
     border-radius: 150px;
+    padding: 20px 0;
 }
 
 #btnReiniciar{
@@ -33,6 +41,7 @@ h2{
     font-weight: 700;
     font-family: "Roboto Flex", sans-serif;
     border-radius: 150px;
+    padding: 20px 0;
 }
 
 #game-over-message {

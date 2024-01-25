@@ -348,10 +348,10 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            height: 100vh;
+            width: 100%;
+            height: auto;
             margin: 0;
-            background-color: #f0f0f0;
-           
+            background-color: #f0f0f0; 
         }
 
         canvas {
@@ -392,7 +392,12 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            margin-bottom: 20px;
+            width: 100%;
+            height: auto;
+            background: linear-gradient(217deg, #FF0A9A, rgba(255, 182, 193, 0) 70.71%),
+                        linear-gradient(127deg, #FCB9B2, rgba(255, 182, 193, 0) 70.71%),
+                        linear-gradient(336deg, #FF9BD0, rgba(255, 182, 193, 0) 70.71%);
+            border-radius: 1%;
         }
 
         #pre-menu button {
@@ -409,6 +414,11 @@
         #score {
             font-size: 18px;
             margin-top: 10px;
+            color: #FF0A9A; /* Color del texto */
+            font-weight: bold; /* Negrita */
+            text-transform: uppercase; /* Convertir a mayúsculas */
+            font-weight: 700;
+            font-family: "Roboto Flex", sans-serif;
         }
     </style>
     <title>Juego de la Serpiente</title>
@@ -419,17 +429,20 @@
         <button id="btnJugar">JUGAR</button>
         <button id="btnReiniciar" style="display: none;">VOLVER A JUGAR</button>
     </div>
-    <canvas id="snakeCanvas" width="400" height="400"></canvas>
-    <div id="controls">
-        <img id="btnUp" src="assets/arriba.png" alt="Arriba">
-        <div id="horizontal-buttons">
-            <img id="btnLeft" src="assets/izquierda.png" alt="Izquierda">
-            <img id="btnRight" src="assets/derecha.png" alt="Derecha">
+    <div id="container">
+        <canvas id="snakeCanvas" width="350" height="350"></canvas>
+        <div id="controls">
+            <img id="btnUp" src="assets/arriba.png" alt="Arriba">
+            <div id="horizontal-buttons">
+                <img id="btnLeft" src="assets/izquierda.png" alt="Izquierda">
+                <img id="btnRight" src="assets/derecha.png" alt="Derecha">
+            </div>
+            <img id="btnDown" src="assets/abajo.png" alt="Abajo">
         </div>
-        <img id="btnDown" src="assets/abajo.png" alt="Abajo">
+        <div id="score">Puntuación: 0</div>
+        <div id="game-over-message"></div>
     </div>
-    <div id="score">Puntuación: 0</div>
-    <div id="game-over-message"></div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const preMenu = document.getElementById('pre-menu');
@@ -611,7 +624,7 @@
             }
 
             function updateScore() {
-                scoreElement.textContent = `Puntuación: ${score}`;
+                scoreElement.textContent = `PUNTUACION: ${score}`;
             }
 
             function startGame() {
