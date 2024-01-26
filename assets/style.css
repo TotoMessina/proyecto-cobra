@@ -74,25 +74,37 @@ h2{
 }
 
 #btnUp{
-    width: 20%;
+    width: 30%;
     height: auto;
 }
 
 #btnLeft{
-    width: 20%;
+    width: 30%;
     height: auto;
 }
 
 #btnRight{
-    width: 20%;
+    width: 30%;
     height: auto;
 }
 
 #btnDown{
-    width: 20%;
+    width: 30%;
     height: auto;
 }
 
 #game-over-message{
     margin:0;
+}
+
+.ig-link{
+    width: 15%;
+    height: auto;
+}
+
+.ig-space {
+    position: absolute;
+    top: 120%;
+    right: 0;
+    margin-left: 10px;
 }
